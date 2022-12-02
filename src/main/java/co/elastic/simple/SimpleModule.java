@@ -14,9 +14,10 @@ import java.nio.file.Path;
 import java.util.function.Supplier;
 
 public class SimpleModule {
-    public static void main(String[] args) throws RestoreException, CheckpointException {
-        final ClassLoader classLoader = buildClassLoader();
+    public static void main(String[] args) throws RestoreException, CheckpointException, IOException {
+        final URLClassLoader classLoader = buildClassLoader();
         final Supplier<?> console = buildConsoleLoader(classLoader);
+        classLoader.close();
         Core.checkpointRestore();
         System.out.println("Hello modules!");
         System.out.println(console.get().toString());
@@ -33,7 +34,7 @@ public class SimpleModule {
         }
     }
 
-    private static ClassLoader buildClassLoader() {
+    private static URLClassLoader buildClassLoader() {
         final Path libDir = Path.of(".").resolve("lib").resolve("ansi-console");
 
         try {
